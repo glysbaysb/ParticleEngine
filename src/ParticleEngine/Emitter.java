@@ -38,11 +38,8 @@ public class Emitter extends EngineObject implements IAct
 
                 p.pos.set(getX(), getY());
 
-                p.velocity.x = 0.01f + rng.nextFloat() * 100;
-                p.velocity.x *= rng.nextInt(2) == 0 ? 1 : -1;
-
-                p.velocity.y = 0.01f + rng.nextFloat() * 100;
-                p.velocity.y *= rng.nextInt(2) == 0 ? 1 : -1;
+                p.velocity.x = (rng.nextFloat() * 100) * (rng.nextInt(2) * 2 - 1);
+                p.velocity.y = (rng.nextFloat() * 100) * (rng.nextInt(2) * 2 - 1);
 
                 list.add(p);
             }

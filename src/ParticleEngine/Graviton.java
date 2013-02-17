@@ -29,23 +29,17 @@ public class Graviton extends Modifier
 
         if (isGlobal())
         {
-            for (Particle p : c)
-            {
-            }
         }
         else
         {
             for (Particle p : c)
             {
-                Vector2F force = new Vector2F(mass * p.mass);
                 Vector2F distance = new Vector2F(getX(), getY()).sub(p.pos);
 
-                float d3 = distance.magnitude();
-                d3 = d3 * d3 * d3;
+                float d = distance.magnitude();
+                d = (d * d * d) / G;
 
-                force.scaleInv(d3).scale(G).multiply(distance);
-
-                p.force.add(force);
+                p.force.add(new Vector2F(mass * p.mass).scaleInv(d).multiply(distance));
             }
         }
     }

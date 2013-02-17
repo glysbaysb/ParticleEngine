@@ -30,9 +30,8 @@ public class Particle implements IDraw, IAct
     {
         final float dt = 1f / Renderer.FPS;
 
-        velocity.add(force.scaleInv(mass).scale(dt));
-        force.scale(velocity, dt);
-        pos.add(force);
+        velocity.add(force.scaleInv(mass / dt));
+        pos.add(force.scale(velocity, dt));
 
         force.setAll(0);
 
