@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public class Graviton extends Modifier
 {
-    private float mass = -5.972e15f;
+    private float mass = 5.972e15f;
 
     public float getMass()
     {
@@ -26,6 +26,11 @@ public class Graviton extends Modifier
     public void apply(Collection<Particle> c)
     {
         final float G = 6.674e-11f;
+
+        if (!isActive())
+        {
+            return;
+        }
 
         if (isGlobal())
         {

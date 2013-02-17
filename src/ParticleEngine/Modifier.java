@@ -2,7 +2,7 @@ package ParticleEngine;
 
 import java.util.Collection;
 
-public abstract class Modifier extends EngineObject
+public abstract class Modifier extends EngineObject implements IApply
 {
     private boolean global = false;
 
@@ -20,6 +20,4 @@ public abstract class Modifier extends EngineObject
     {
         super(renderer);
     }
-
-    public abstract void apply(Collection<Particle> c);
 }

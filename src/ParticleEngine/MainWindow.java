@@ -9,6 +9,9 @@ public class MainWindow extends JFrame
 {
     private JPanel rootPanel;
     private Renderer renderer;
+    public JRadioButton emitterRB;
+    public JRadioButton positiveMassRB;
+    public JRadioButton negativeMassRB;
 
     public MainWindow()
     {
@@ -23,6 +26,8 @@ public class MainWindow extends JFrame
     public static void main(String[] args)
     {
         final MainWindow wnd = new MainWindow();
+
+        wnd.renderer.init(wnd);
 
         ActionListener listener = new ActionListener()
         {

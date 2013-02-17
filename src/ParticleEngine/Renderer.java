@@ -13,7 +13,9 @@ public class Renderer extends JPanel implements MouseInputListener
     private final int NUM_FPS_VALUES = 10;
     private final int MAX_FRAME_SKIPS = 5;
 
-    private Emitter mouseEmitter;
+    private MainWindow wnd;
+
+    private EngineObject mouseTool;
     private ArrayList<Emitter> emitters;
     private ArrayList<Modifier> modifiers;
     private ArrayList<Particle> particles;
@@ -36,8 +38,13 @@ public class Renderer extends JPanel implements MouseInputListener
         fpsValues = new double[NUM_FPS_VALUES];
         lastTime = System.nanoTime();
 
-        mouseEmitter = new Emitter(this);
-        mouseEmitter.setActive(false);
+        mouseTool = new Emitter(this);
+        mouseTool.setActive(false);
+    }
+
+    public void init(MainWindow wnd)
+    {
+        this.wnd = wnd;
     }
 
     public void addParticles(Collection<Particle> c)
@@ -93,7 +100,14 @@ public class Renderer extends JPanel implements MouseInputListener
             e.act();
         }
 
-        mouseEmitter.act();
+        if (mouseTool instanceof IAct)
+        {
+            ((IAct)mouseTool).act();
+        }
+        if (mouseTool instanceof IApply)
+        {
+            ((IApply)mouseTool).apply(particles);
+        }
 
         for (int i = 0; i < particles.size(); i++)
         {
@@ -131,7 +145,7 @@ public class Renderer extends JPanel implements MouseInputListener
             m.draw(g);
         }
 
-        mouseEmitter.draw(g);
+        mouseTool.draw(g);
 
         g.setColor(Color.WHITE);
         g.drawString("FPS: " + (int)avgFPS, 10, 20);
@@ -151,20 +165,32 @@ public class Renderer extends JPanel implements MouseInputListener
         {
             if (e.isControlDown())
             {
-                Graviton g = new Graviton(this);
-                g.setLocation(e.getPoint());
+                if (mouseTool instanceof Emitter)
+                {
+                    Emitter emitter = new Emitter(this);
+                    emitter.setLocation(e.getPoint());
 
-                modifiers.add(g);
+                    emitters.add(emitter);
+                }
+                else if (mouseTool instanceof Graviton)
+                {
+                    Graviton g = new Graviton(this);
+                    g.setLocation(e.getPoint());
+                    g.setMass(((Graviton)mouseTool).getMass());
+
+                    modifiers.add(g);
+                }
             }
             else
             {
-                mouseEmitter.setActive(true);
+                mouseTool.setActive(true);
             }
         }
         else if (e.getButton() == MouseEvent.BUTTON3)
         {
             if (e.isControlDown())
             {
+                emitters.clear();
                 modifiers.clear();
             }
             else
@@ -179,18 +205,36 @@ public class Renderer extends JPanel implements MouseInputListener
     {
         if (e.getButton() == MouseEvent.BUTTON1)
         {
-            mouseEmitter.setActive(false);
+            mouseTool.setActive(false);
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e)
     {
+        if (wnd.emitterRB.isSelected())
+        {
+            mouseTool = new Emitter(this);
+        }
+        else if (wnd.positiveMassRB.isSelected())
+        {
+            mouseTool = new Graviton(this);
+        }
+        else
+        {
+            Graviton graviton = new Graviton(this);
+            graviton.setMass(graviton.getMass() * -1);
+
+            mouseTool = graviton;
+        }
+
+        mouseTool.setActive(false);
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
+        mouseTool.setActive(false);
     }
 
     int count = 0;
@@ -202,10 +246,22 @@ public class Renderer extends JPanel implements MouseInputListener
 
         if (e.isControlDown() && ++count > 10)
         {
-            Graviton g = new Graviton(this);
-            g.setLocation(e.getPoint());
+            if (mouseTool instanceof Emitter)
+            {
+                Emitter emitter = new Emitter(this);
+                emitter.setLocation(e.getPoint());
 
-            modifiers.add(g);
+                emitters.add(emitter);
+            }
+            else if (mouseTool instanceof Graviton)
+            {
+                Graviton g = new Graviton(this);
+                g.setLocation(e.getPoint());
+                g.setMass(((Graviton)mouseTool).getMass());
+
+                modifiers.add(g);
+            }
+
             count = 0;
         }
     }
@@ -213,6 +269,6 @@ public class Renderer extends JPanel implements MouseInputListener
     @Override
     public void mouseMoved(MouseEvent e)
     {
-        mouseEmitter.setLocation(e.getPoint());
+        mouseTool.setLocation(e.getPoint());
     }
 }
