@@ -52,7 +52,7 @@ public class Graviton extends Modifier
     @Override
     public void draw(Graphics g)
     {
-        g.setColor(Color.RED);
+        g.setColor((mass < 0 ? Color.RED : Color.BLUE));
         g.fillOval(getX() - 7, getY() - 7, 14, 14);
         g.setColor(Color.WHITE);
         g.drawOval(getX() - 7, getY() - 7, 14, 14);
